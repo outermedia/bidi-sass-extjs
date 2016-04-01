@@ -1,0 +1,201 @@
+
+//--------------------------------------------------------------------------------------------------
+// utility
+//--------------------------------------------------------------------------------------------------
+
+// 'extjs-apply-*' mixins wrap styles into direction aware selector
+// 'extjs-write-*' mixins write styles only without wrapping
+
+
+
+//--------------------------------
+// Simply write a single style and its value
+//--------------------------------
+@mixin extjs-write-style($property, $value) {
+    #{$property}: #{$value};
+}
+
+//--------------------------------
+// Generates wrapping selectors for ltr and rtl styles and write the given styles into the
+// selectors. In case the $include-rtl variable is not set or false, then no direction aware
+// selectors are generated.
+//--------------------------------
+@mixin extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value: null) {
+    $rtl-value: if($rtl-value == null, $ltr-value, $rtl-value);
+
+    @if ((variable_exists(include-rtl) or global_variable_exists(include-rtl)) and $include-rtl) {
+        &:not(.#{$prefix}rtl) #{$sub-selector}{
+            @include extjs-write-style($ltr-property, $ltr-value);
+        }
+
+        &.#{$prefix}rtl #{$sub-selector} {
+            @include extjs-write-style($rtl-property, $rtl-value);
+        }
+    } @else {
+        @include extjs-write-style($ltr-property, $ltr-value);
+    }
+}
+
+
+
+//--------------------------------
+// Generates wrapping selectors for ltr and rtl styles and write the given styles map into the
+// selectors. In case the $include-rtl variable is not set or false, then no direction aware
+// selectors are generated.
+//--------------------------------
+@mixin extjs-apply-all($sub-selector, $styles) {
+    
+}
+
+
+//--------------------------------
+// Wraps the given style into direction aware selectors
+//--------------------------------
+@mixin extjs-apply-style($property, $value, $sub-selector: "") {
+    $ltr-property: $property;
+    $ltr-value: $value;
+
+    $rtl-property: $property;
+    $rtl-value: null;
+
+    @if (extjs-is-left-property($property)) {
+        $rtl-property: extjs-str-replace($property, left, right);
+    } @else if(extjs-is-right-property($property)) {
+        $rtl-property: extjs-str-replace($property, right, left);
+    }
+
+    @include extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value);
+}
+
+
+//--------------------------------
+// Wraps a fully compact style (top right bottom left) into direction aware selectors
+//--------------------------------
+@mixin extjs-apply-fully-compact-style($property, $value, $sub-selector: "") {
+    $top: nth($value, 1);
+    $right: nth($value, 2);
+    $bottom: nth($value, 3);
+    $left: nth($value, 4);
+
+    @include extjs-apply(
+        $sub-selector,
+        $property, $top $right $bottom $left,
+        $property, $top $left $bottom $right
+    );
+}
+
+
+//--------------------------------
+// Wraps a compact style into direction aware selectors
+//--------------------------------
+@mixin extjs-apply-compact-style($property, $value, $sub-selector: "") {
+    @if (type-of($value) == list and length($value) == 4) {
+        @include extjs-apply-fully-compact-style($property, $value, $sub-selector);
+    } @else {
+        @include extjs-apply-style($property, $value, $sub-selector);
+    }
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// padding
+//--------------------------------------------------------------------------------------------------
+
+@mixin padding($value, $sub-selector: "") {
+    @include extjs-apply-compact-style(padding, $value, $sub-selector);
+}
+
+@mixin padding-left($value, $sub-selector: "") {
+    @include extjs-apply-style(padding-left, $value, $sub-selector);
+}
+
+@mixin padding-right($value, $sub-selector: "") {
+    @include extjs-apply-style(padding-right, $value, $sub-selector);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// margin
+//--------------------------------------------------------------------------------------------------
+
+@mixin margin($value, $sub-selector: "") {
+    @include extjs-apply-compact-style(margin, $value, $sub-selector);
+}
+
+@mixin margin-left($value, $sub-selector: "") {
+    @include extjs-apply-style(margin-left, $value, $sub-selector);
+}
+
+@mixin margin-right($value, $sub-selector: "") {
+    @include extjs-apply-style(margin-right, $value, $sub-selector);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// border-width
+//--------------------------------------------------------------------------------------------------
+
+@mixin border-width($value, $sub-selector: "") {
+    @include extjs-apply-compact-style(border-width, $value, $sub-selector);
+}
+
+@mixin border-left-width($value, $sub-selector: "") {
+    @include extjs-apply-style(border-left-width, $value, $sub-selector);
+}
+
+@mixin border-right-width($value, $sub-selector: "") {
+    @include extjs-apply-style(border-right-width, $value, $sub-selector);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// border-style
+//--------------------------------------------------------------------------------------------------
+
+@mixin border-style($value, $sub-selector: "") {
+    @include extjs-apply-compact-style(border-style, $value, $sub-selector);
+}
+
+@mixin border-left-style($value, $sub-selector: "") {
+    @include extjs-apply-style(border-left-style, $value, $sub-selector);
+}
+
+@mixin border-right-style($value, $sub-selector: "") {
+    @include extjs-apply-style(border-right-style, $value, $sub-selector);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// border-color
+//--------------------------------------------------------------------------------------------------
+
+@mixin border-color($value, $sub-selector: "") {
+    @include extjs-apply-compact-style(border-color, $value, $sub-selector);
+}
+
+@mixin border-left-color($value, $sub-selector: "") {
+    @include extjs-apply-style(border-left-color, $value, $sub-selector);
+}
+
+@mixin border-right-color($value, $sub-selector: "") {
+    @include extjs-apply-style(border-right-color, $value, $sub-selector);
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// border (generic)
+//--------------------------------------------------------------------------------------------------
+
+@mixin border-left($value, $sub-selector: "") {
+    @include extjs-apply-style(border-left, $value, $sub-selector);
+}
+
+@mixin border-right($value, $sub-selector: "") {
+    @include extjs-apply-style(border-right, $value, $sub-selector);
+}

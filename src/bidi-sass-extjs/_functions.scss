@@ -1,0 +1,85 @@
+
+
+//--------------------------------------------------------------------------------------------------
+// Replaces the first occurrence of $search by $replacement in $string
+//--------------------------------------------------------------------------------------------------
+@function extjs-str-replace($string, $search, $replacement) {
+    $index: str-index($string, $search);
+    $result: $string;
+
+    @if ($index != null) {
+        // replace first occurrence
+        $before-replace: str-slice($string, 1, $index - 1);
+        $after-replace: str-slice($string, $index + str-length($search));
+        $result: #{$before-replace}#{$replacement}#{$after-replace};
+    }
+
+    @return $result;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Replaces all occurrences of $search by $replacement in $string
+//--------------------------------------------------------------------------------------------------
+@function extjs-str-replace-all($string, $search, $replacement) {
+
+    @if (str-index($replacement, $search)) {
+        @error "Inifinite recursion. Replacement '#{$replacement}' contains search string '#{$search}'";
+    }
+
+    $index: str-index($string, $search);
+
+    @if ($index == null) {
+        // break recursion
+        @return $string;
+    } @else {
+        // replace first occurrence
+        $result: extjs-str-replace($string, $search, $replacement);
+
+        // and continue with potential next recursively
+        @return extjs-str-replace-all($result, $search, $replacement);
+    }
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// returns true when the given property contains 'left'
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-left-property($property) {
+    @return str-index($property, left) != null;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// returns true when the given property contains 'right'
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-right-property($property) {
+    @return str-index($property, right) != null;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// expects $source to be either 'left' or 'right' and returns the other value
+//--------------------------------------------------------------------------------------------------
+@function extjs-invert-direction($source) {
+    @return if ($source == left, right, left);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// returns the opposite direction property name for the given property
+//--------------------------------------------------------------------------------------------------
+@function extjs-invert-property($property) {
+
+    @return if ($source == left, right, left);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// expects $source to be either 'left' or 'right' and returns the other value
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-compact-style-property($source) {
+    $compact-property-names: padding margin border-width border-style border-color;
+
+    @return index($compact-property-names, $source) != null;
+}
