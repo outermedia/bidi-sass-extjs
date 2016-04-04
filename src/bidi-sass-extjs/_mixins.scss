@@ -58,11 +58,7 @@
     $rtl-property: $property;
     $rtl-value: null;
 
-    @if (extjs-is-left-property($property)) {
-        $rtl-property: extjs-str-replace($property, left, right);
-    } @else if(extjs-is-right-property($property)) {
-        $rtl-property: extjs-str-replace($property, right, left);
-    }
+    $rtl-property: extjs-invert-property($property);
 
     @include extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value);
 }

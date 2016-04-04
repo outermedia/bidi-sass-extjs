@@ -70,8 +70,15 @@
 // returns the opposite direction property name for the given property
 //------------------------------------------------------------------------------
 @function extjs-invert-property($property) {
+    $result: $property;
 
-    @return if ($source == left, right, left);
+    @if (extjs-is-left-property($property)) {
+        $result: extjs-str-replace-all($property, left, right);
+    } @else if(extjs-is-right-property($property)) {
+        $result: extjs-str-replace-all($property, right, left);
+    }
+
+    @return $result;
 }
 
 
