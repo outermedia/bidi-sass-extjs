@@ -43,19 +43,22 @@
 }
 
 
-//
+//--------------------------------------------------------------------------------------------------
+// indicates whether the $include-rtl variable is available and set to true (done by/in/with ExtJS)
+//--------------------------------------------------------------------------------------------------
 @function extjs-include-rtl() {
     @return (variable-exists(include-rtl) or global-variable-exists(include-rtl)) and $include-rtl;
 }
 
 
 //--------------------------------------------------------------------------------------------------
-// expects $source to be either 'left' or 'right' and returns the other value
+// determines whether the given property is a compact style property
 //--------------------------------------------------------------------------------------------------
-@function extjs-is-compact-style-property($source) {
+@function extjs-is-compact-style-property($property) {
     $compact-property-names: padding margin border-width border-style border-color;
 
-    @return index($compact-property-names, $source) != null;
+    @return index($compact-property-names, $property) != null;
+}
 }
 
 

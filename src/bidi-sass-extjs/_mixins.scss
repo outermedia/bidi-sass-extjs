@@ -76,35 +76,14 @@
     @if extjs-include-rtl() {
         &:not(.#{$prefix}rtl) #{$sub-selector} {
             @include extjs-write-bidi-styles($styles, ltr);
-            //@each $property, $value in $styles {
-            //    $bidi-style: extjs-calculate-bidi-style($property, $value);
-            //
-            //    $ltr: map-get($bidi-style, ltr);
-            //    $rtl: map-get($bidi-style, rtl);
-            //    @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
-            //}
         }
 
         &.#{$prefix}rtl #{$sub-selector} {
             @include extjs-write-bidi-styles($styles, rtl);
-            //@each $property, $value in $styles {
-            //    $bidi-style: extjs-calculate-bidi-style($property, $value);
-            //
-            //    $ltr: map-get($bidi-style, ltr);
-            //    $rtl: map-get($bidi-style, rtl);
-            //    @include extjs-write-style(map-get($rtl, property), map-get($rtl, value));
-            //}
         }
     }
     @else {
         @include extjs-write-bidi-styles($styles, ltr);
-        //@each $property, $value in $styles {
-        //    $bidi-style: extjs-calculate-bidi-style($property, $value);
-        //
-        //    $ltr: map-get($bidi-style, ltr);
-        //    $rtl: map-get($bidi-style, rtl);
-        //    @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
-        //}
     }
 }
 
@@ -119,13 +98,18 @@
 
 
 
+
+//--------------------------------
+// Public API
+//--------------------------------
+
+
 //--------------------------------------------------------------------------------------------------
 // Bidirectional style mapping mixin (public API)
 //--------------------------------------------------------------------------------------------------
 @mixin extjs-bidi($styles, $sub-selector: "") {
     @include extjs-apply-styles($sub-selector, $styles);
 }
-
 
 
 
