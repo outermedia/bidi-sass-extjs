@@ -1,16 +1,18 @@
 .foo:not(.x-rtl) {
-  padding: 8px 2px 3px 4px; }
+  padding: 1px 2px 3px 4px; }
 .foo.x-rtl {
-  padding: 8px 4px 3px 2px; }
+  padding: 1px 4px 3px 2px; }
 .foo:not(.x-rtl) {
   margin-left: 5px; }
 .foo.x-rtl {
   margin-right: 5px; }
 .foo:not(.x-rtl) {
-  margin: 1 2 3 4;
-  padding: 5 6 7 8; }
+  margin: 1em 2em 3em 4em;
+  padding: 5in 6in 7in 8in;
+  float: right; }
 .foo.x-rtl {
-  margin: 1 4 3 2;
-  padding: 5 8 7 6; }
+  margin: 1em 4em 3em 2em;
+  padding: 5in 8in 7in 6in;
+  float: left; }
 
 /*# sourceMappingURL=styles.rtl.css.map */

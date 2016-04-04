@@ -59,6 +59,15 @@
 
     @return index($compact-property-names, $property) != null;
 }
+
+
+//--------------------------------------------------------------------------------------------------
+// indicates whether the given property supports direction related values
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-direction-value-supporting-property($property) {
+    $direction-related-property-names: float text-align clear;
+
+    @return index($direction-related-property-names, $property) != null;
 }
 
 
@@ -95,6 +104,14 @@
 
 
 //--------------------------------------------------------------------------------------------------
+// indicates whether the given value is either 'left' or 'right'
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-direction-value($value) {
+    @return index(left right, $value);
+}
+
+
+//--------------------------------------------------------------------------------------------------
 // returns the opposite direction property name for the given property
 //--------------------------------------------------------------------------------------------------
 @function extjs-invert-property($property) {
@@ -114,14 +131,17 @@
 //--------------------------------------------------------------------------------------------------
 // swaps left and right values of a compact style (top, right, bottom, left)
 //--------------------------------------------------------------------------------------------------
-@function extjs-swap-direction-values($style-value) {
-    $result: $style-value;
+@function extjs-swap-direction-values($property, $value) {
+    $result: $value;
 
-    @if extjs-is-compact-style-value($style-value) {
+    @if extjs-is-direction-value-supporting-property($property) and extjs-is-direction-value($value) {
+        $result: if($value == left, right, left);
+    }
+    @else if extjs-is-compact-style-value($value) {
         // top right bottom left ==> top left bottom right
         $result: (
-            nth($style-value, 1) nth($style-value, 4)
-            nth($style-value, 3) nth($style-value, 2)
+            nth($value, 1) nth($value, 4)
+            nth($value, 3) nth($value, 2)
         );
     }
 
@@ -134,7 +154,7 @@
 //--------------------------------------------------------------------------------------------------
 @function extjs-calculate-bidi-style($property, $value, $inverse-value: null) {
     @if $inverse-value == null {
-        $inverse-value: extjs-swap-direction-values($value);
+        $inverse-value: extjs-swap-direction-values($property, $value);
     }
 
     $ltr: (property: $property, value: $value);
