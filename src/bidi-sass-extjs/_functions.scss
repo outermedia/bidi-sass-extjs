@@ -52,6 +52,21 @@
 
 
 //--------------------------------------------------------------------------------------------------
+// indicates whether the given property is a border-radius style variant
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-border-radius-property($property) {
+    $border-radius-property-names:
+        border-radius
+        border-top-left-radius
+        border-top-right-radius
+        border-bottom-right-radius
+        border-bottom-left-radius;
+
+    @return index($border-radius-property-names, $property) != null;
+}
+
+
+//--------------------------------------------------------------------------------------------------
 // determines whether the given property is a compact style property
 //--------------------------------------------------------------------------------------------------
 @function extjs-is-compact-style-property($property) {
