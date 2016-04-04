@@ -84,6 +84,25 @@
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// swaps left and right values of a compact style (top, right, bottom, left)
+//--------------------------------------------------------------------------------------------------
+@function extjs-swap-direction-values($style-value) {
+    $result: $style-value;
+
+    @if type-of($style-value) == list and length($style-value) == 4 {
+        // top right bottom left ==> top left bottom right
+        $result: (
+            nth($style-value, 1) nth($style-value, 4)
+            nth($style-value, 3) nth($style-value, 2)
+        );
+    }
+
+    @return $result;
+}
+
+
+//--------------------------------------------------------------------------------------------------
 // expects $source to be either 'left' or 'right' and returns the other value
 //--------------------------------------------------------------------------------------------------
 @function extjs-is-compact-style-property($source) {

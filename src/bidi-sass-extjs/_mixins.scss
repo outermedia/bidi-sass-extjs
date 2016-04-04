@@ -73,15 +73,10 @@
 // Wraps a fully compact style (top right bottom left) into direction aware selectors
 //--------------------------------------------------------------------------------------------------
 @mixin extjs-apply-fully-compact-style($property, $value, $sub-selector: "") {
-    $top: nth($value, 1);
-    $right: nth($value, 2);
-    $bottom: nth($value, 3);
-    $left: nth($value, 4);
-
     @include extjs-apply(
         $sub-selector,
-        $property, $top $right $bottom $left,
-        $property, $top $left $bottom $right
+        $property, $value,
+        $property, extjs-swap-direction-values($value)
     );
 }
 
