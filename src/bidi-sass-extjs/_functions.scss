@@ -43,6 +43,30 @@
 }
 
 
+//
+@function extjs-include-rtl() {
+    @return (variable-exists(include-rtl) or global-variable-exists(include-rtl)) and $include-rtl;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// expects $source to be either 'left' or 'right' and returns the other value
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-compact-style-property($source) {
+    $compact-property-names: padding margin border-width border-style border-color;
+
+    @return index($compact-property-names, $source) != null;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// determines whether the given value is a fully compact value (top right bottom left)
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-compact-style-value($value) {
+    @return type-of($value) == list and length($value) == 4;
+}
+
+
 //--------------------------------------------------------------------------------------------------
 // returns true when the given property contains 'left'
 //--------------------------------------------------------------------------------------------------
@@ -90,7 +114,7 @@
 @function extjs-swap-direction-values($style-value) {
     $result: $style-value;
 
-    @if type-of($style-value) == list and length($style-value) == 4 {
+    @if extjs-is-compact-style-value($style-value) {
         // top right bottom left ==> top left bottom right
         $result: (
             nth($style-value, 1) nth($style-value, 4)
@@ -103,10 +127,15 @@
 
 
 //--------------------------------------------------------------------------------------------------
-// expects $source to be either 'left' or 'right' and returns the other value
+// provides a map with ltr and rtl property information built from the given style information
 //--------------------------------------------------------------------------------------------------
-@function extjs-is-compact-style-property($source) {
-    $compact-property-names: padding margin border-width border-style border-color;
+@function extjs-calculate-bidi-style($property, $value, $inverse-value: null) {
+    @if $inverse-value == null {
+        $inverse-value: extjs-swap-direction-values($value);
+    }
 
-    @return index($compact-property-names, $source) != null;
+    $ltr: (property: $property, value: $value);
+    $rtl: (property: extjs-invert-property($property), value: $inverse-value);
+
+    @return (ltr: $ltr, rtl: $rtl);
 }

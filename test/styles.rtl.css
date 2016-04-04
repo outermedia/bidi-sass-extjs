@@ -1,6 +1,16 @@
 .foo:not(.x-rtl) {
-  padding: 1px 2px 3px 4px; }
+  padding: 8px 2px 3px 4px; }
 .foo.x-rtl {
-  padding: 1px 4px 3px 2px; }
+  padding: 8px 4px 3px 2px; }
+.foo:not(.x-rtl) {
+  margin-left: 5px; }
+.foo.x-rtl {
+  margin-right: 5px; }
+.foo:not(.x-rtl) {
+  margin: 1 2 3 4;
+  padding: 5 6 7 8; }
+.foo.x-rtl {
+  margin: 1 4 3 2;
+  padding: 5 8 7 6; }
 
 /*# sourceMappingURL=styles.rtl.css.map */

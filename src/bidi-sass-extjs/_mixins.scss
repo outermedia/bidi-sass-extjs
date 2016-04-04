@@ -15,7 +15,28 @@
     #{$property}: #{$value};
 }
 
+
+
 //--------------------------------------------------------------------------------------------------
+// Writes a single style in a direction aware fashion
+//--------------------------------------------------------------------------------------------------
+@mixin extjs-write-bidi-style($property, $value, $direction) {
+    $bidi-style: extjs-calculate-bidi-style($property, $value);
+    $style: map-get($bidi-style, $direction);
+
+    @include extjs-write-style(map-get($style, property), map-get($style, value));
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
+// Batch processing variant of the extjs-write-bidi-style mixin
+//--------------------------------------------------------------------------------------------------
+@mixin extjs-write-bidi-styles($styles, $direction) {
+    @each $property, $value in $styles {
+        @include extjs-write-bidi-style($property, $value, $direction);
+    }
+}
 
 
 
@@ -24,74 +45,87 @@
 // selectors. In case the $include-rtl variable is not set or false, then no direction aware
 // selectors are generated.
 //--------------------------------------------------------------------------------------------------
-@mixin extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value: null) {
-    $rtl-value: if($rtl-value == null, $ltr-value, $rtl-value);
+@mixin extjs-apply($sub-selector, $property, $value) {
+    $bidi-style: extjs-calculate-bidi-style($property, $value);
 
-    @if (variable-exists(include-rtl) or global-variable-exists(include-rtl)) and $include-rtl {
+    $ltr: map-get($bidi-style, ltr);
+    $rtl: map-get($bidi-style, rtl);
+
+    @if extjs-include-rtl() {
         &:not(.#{$prefix}rtl) #{$sub-selector}{
-            @include extjs-write-style($ltr-property, $ltr-value);
+            @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
         }
 
         &.#{$prefix}rtl #{$sub-selector} {
-            @include extjs-write-style($rtl-property, $rtl-value);
+            @include extjs-write-style(map-get($rtl, property), map-get($rtl, value));
         }
     }
     @else {
-        @include extjs-write-style($ltr-property, $ltr-value);
+        @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
     }
 }
 
 
 
-@mixin extjs-apply-all($sub-selector, $styles) {
-    
 //--------------------------------------------------------------------------------------------------
 // Generates wrapping selectors for ltr and rtl styles and write the given styles map into the
 // selectors. In case the $include-rtl variable is not set or false, then no direction aware
 // selectors are generated.
 //--------------------------------------------------------------------------------------------------
+@mixin extjs-apply-styles($sub-selector, $styles) {
+    @if extjs-include-rtl() {
+        &:not(.#{$prefix}rtl) #{$sub-selector} {
+            @include extjs-write-bidi-styles($styles, ltr);
+            //@each $property, $value in $styles {
+            //    $bidi-style: extjs-calculate-bidi-style($property, $value);
+            //
+            //    $ltr: map-get($bidi-style, ltr);
+            //    $rtl: map-get($bidi-style, rtl);
+            //    @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
+            //}
+        }
+
+        &.#{$prefix}rtl #{$sub-selector} {
+            @include extjs-write-bidi-styles($styles, rtl);
+            //@each $property, $value in $styles {
+            //    $bidi-style: extjs-calculate-bidi-style($property, $value);
+            //
+            //    $ltr: map-get($bidi-style, ltr);
+            //    $rtl: map-get($bidi-style, rtl);
+            //    @include extjs-write-style(map-get($rtl, property), map-get($rtl, value));
+            //}
+        }
+    }
+    @else {
+        @include extjs-write-bidi-styles($styles, ltr);
+        //@each $property, $value in $styles {
+        //    $bidi-style: extjs-calculate-bidi-style($property, $value);
+        //
+        //    $ltr: map-get($bidi-style, ltr);
+        //    $rtl: map-get($bidi-style, rtl);
+        //    @include extjs-write-style(map-get($ltr, property), map-get($ltr, value));
+        //}
+    }
 }
+
 
 
 //--------------------------------------------------------------------------------------------------
 // Wraps the given style into direction aware selectors
 //--------------------------------------------------------------------------------------------------
 @mixin extjs-apply-style($property, $value, $sub-selector: "") {
-    $ltr-property: $property;
-    $ltr-value: $value;
-
-    $rtl-property: $property;
-    $rtl-value: null;
-
-    $rtl-property: extjs-invert-property($property);
-
-    @include extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value);
+    @include extjs-apply($sub-selector, $property, $value);
 }
 
 
-//--------------------------------------------------------------------------------------------------
-// Wraps a fully compact style (top right bottom left) into direction aware selectors
-//--------------------------------------------------------------------------------------------------
-@mixin extjs-apply-fully-compact-style($property, $value, $sub-selector: "") {
-    @include extjs-apply(
-        $sub-selector,
-        $property, $value,
-        $property, extjs-swap-direction-values($value)
-    );
-}
-
 
 //--------------------------------------------------------------------------------------------------
-// Wraps a compact style into direction aware selectors
+// Bidirectional style mapping mixin (public API)
 //--------------------------------------------------------------------------------------------------
-@mixin extjs-apply-compact-style($property, $value, $sub-selector: "") {
-    @if type-of($value) == list and length($value) == 4 {
-        @include extjs-apply-fully-compact-style($property, $value, $sub-selector);
-    }
-    @else {
-        @include extjs-apply-style($property, $value, $sub-selector);
-    }
+@mixin extjs-bidi($styles, $sub-selector: "") {
+    @include extjs-apply-styles($sub-selector, $styles);
 }
+
 
 
 
@@ -100,7 +134,7 @@
 //--------------------------------------------------------------------------------------------------
 
 @mixin padding($value, $sub-selector: "") {
-    @include extjs-apply-compact-style(padding, $value, $sub-selector);
+    @include extjs-apply-style(padding, $value, $sub-selector);
 }
 
 @mixin padding-left($value, $sub-selector: "") {
@@ -118,7 +152,7 @@
 //--------------------------------------------------------------------------------------------------
 
 @mixin margin($value, $sub-selector: "") {
-    @include extjs-apply-compact-style(margin, $value, $sub-selector);
+    @include extjs-apply-style(margin, $value, $sub-selector);
 }
 
 @mixin margin-left($value, $sub-selector: "") {
@@ -136,7 +170,7 @@
 //--------------------------------------------------------------------------------------------------
 
 @mixin border-width($value, $sub-selector: "") {
-    @include extjs-apply-compact-style(border-width, $value, $sub-selector);
+    @include extjs-apply-style(border-width, $value, $sub-selector);
 }
 
 @mixin border-left-width($value, $sub-selector: "") {
@@ -154,7 +188,7 @@
 //--------------------------------------------------------------------------------------------------
 
 @mixin border-style($value, $sub-selector: "") {
-    @include extjs-apply-compact-style(border-style, $value, $sub-selector);
+    @include extjs-apply-style(border-style, $value, $sub-selector);
 }
 
 @mixin border-left-style($value, $sub-selector: "") {
@@ -172,7 +206,7 @@
 //--------------------------------------------------------------------------------------------------
 
 @mixin border-color($value, $sub-selector: "") {
-    @include extjs-apply-compact-style(border-color, $value, $sub-selector);
+    @include extjs-apply-style(border-color, $value, $sub-selector);
 }
 
 @mixin border-left-color($value, $sub-selector: "") {
