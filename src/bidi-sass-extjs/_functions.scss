@@ -7,7 +7,7 @@
     $index: str-index($string, $search);
     $result: $string;
 
-    @if ($index != null) {
+    @if $index != null {
         // replace first occurrence
         $before-replace: str-slice($string, 1, $index - 1);
         $after-replace: str-slice($string, $index + str-length($search));
@@ -23,16 +23,17 @@
 //------------------------------------------------------------------------------
 @function extjs-str-replace-all($string, $search, $replacement) {
 
-    @if (str-index($replacement, $search)) {
+    @if str-index($replacement, $search) {
         @error "Inifinite recursion. Replacement '#{$replacement}' contains search string '#{$search}'";
     }
 
     $index: str-index($string, $search);
 
-    @if ($index == null) {
+    @if $index == null {
         // break recursion
         @return $string;
-    } @else {
+    }
+    @else {
         // replace first occurrence
         $result: extjs-str-replace($string, $search, $replacement);
 
@@ -72,9 +73,10 @@
 @function extjs-invert-property($property) {
     $result: $property;
 
-    @if (extjs-is-left-property($property)) {
+    @if extjs-is-left-property($property) {
         $result: extjs-str-replace-all($property, left, right);
-    } @else if(extjs-is-right-property($property)) {
+    }
+    @else if extjs-is-right-property($property) {
         $result: extjs-str-replace-all($property, right, left);
     }
 

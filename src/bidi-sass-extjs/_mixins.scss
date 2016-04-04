@@ -23,7 +23,7 @@
 @mixin extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value: null) {
     $rtl-value: if($rtl-value == null, $ltr-value, $rtl-value);
 
-    @if ((variable_exists(include-rtl) or global_variable_exists(include-rtl)) and $include-rtl) {
+    @if (variable_exists(include-rtl) or global_variable_exists(include-rtl)) and $include-rtl {
         &:not(.#{$prefix}rtl) #{$sub-selector}{
             @include extjs-write-style($ltr-property, $ltr-value);
         }
@@ -31,7 +31,8 @@
         &.#{$prefix}rtl #{$sub-selector} {
             @include extjs-write-style($rtl-property, $rtl-value);
         }
-    } @else {
+    }
+    @else {
         @include extjs-write-style($ltr-property, $ltr-value);
     }
 }
@@ -85,9 +86,10 @@
 // Wraps a compact style into direction aware selectors
 //--------------------------------
 @mixin extjs-apply-compact-style($property, $value, $sub-selector: "") {
-    @if (type-of($value) == list and length($value) == 4) {
+    @if type-of($value) == list and length($value) == 4 {
         @include extjs-apply-fully-compact-style($property, $value, $sub-selector);
-    } @else {
+    }
+    @else {
         @include extjs-apply-style($property, $value, $sub-selector);
     }
 }
