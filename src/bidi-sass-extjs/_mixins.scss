@@ -8,22 +8,26 @@
 
 
 
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 // Simply write a single style and its value
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 @mixin extjs-write-style($property, $value) {
     #{$property}: #{$value};
 }
 
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
+
+
+
+//--------------------------------------------------------------------------------------------------
 // Generates wrapping selectors for ltr and rtl styles and write the given styles into the
 // selectors. In case the $include-rtl variable is not set or false, then no direction aware
 // selectors are generated.
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 @mixin extjs-apply($sub-selector, $ltr-property, $ltr-value, $rtl-property, $rtl-value: null) {
     $rtl-value: if($rtl-value == null, $ltr-value, $rtl-value);
 
-    @if (variable_exists(include-rtl) or global_variable_exists(include-rtl)) and $include-rtl {
+    @if (variable-exists(include-rtl) or global-variable-exists(include-rtl)) and $include-rtl {
         &:not(.#{$prefix}rtl) #{$sub-selector}{
             @include extjs-write-style($ltr-property, $ltr-value);
         }
@@ -39,19 +43,19 @@
 
 
 
-//--------------------------------
+@mixin extjs-apply-all($sub-selector, $styles) {
+    
+//--------------------------------------------------------------------------------------------------
 // Generates wrapping selectors for ltr and rtl styles and write the given styles map into the
 // selectors. In case the $include-rtl variable is not set or false, then no direction aware
 // selectors are generated.
-//--------------------------------
-@mixin extjs-apply-all($sub-selector, $styles) {
-    
+//--------------------------------------------------------------------------------------------------
 }
 
 
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 // Wraps the given style into direction aware selectors
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 @mixin extjs-apply-style($property, $value, $sub-selector: "") {
     $ltr-property: $property;
     $ltr-value: $value;
@@ -65,9 +69,9 @@
 }
 
 
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 // Wraps a fully compact style (top right bottom left) into direction aware selectors
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 @mixin extjs-apply-fully-compact-style($property, $value, $sub-selector: "") {
     $top: nth($value, 1);
     $right: nth($value, 2);
@@ -82,9 +86,9 @@
 }
 
 
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 // Wraps a compact style into direction aware selectors
-//--------------------------------
+//--------------------------------------------------------------------------------------------------
 @mixin extjs-apply-compact-style($property, $value, $sub-selector: "") {
     @if type-of($value) == list and length($value) == 4 {
         @include extjs-apply-fully-compact-style($property, $value, $sub-selector);
