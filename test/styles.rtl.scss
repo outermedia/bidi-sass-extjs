@@ -6,12 +6,35 @@ $include-rtl: true;
 
 @import "../src/bidi-sass-extjs/all";
 
+
+@mixin test ($value) {
+    $map: (a: 4px, b: 8px, c: 12px, d: 16px);
+
+    content: quote(#{nth($map, 1)});
+
+    //$map: set-nth($map, 1, nth($map, 3));
+
+    //content: quote(#{nth($map, 1)});
+    //content: quote(#{index($map, (d 16px))});
+
+    $index-value: map-get($map, c);
+    $map-value: index($map, (c $index-value));
+
+    content: $map-value;
+
+}
+
 .foo {
-    @include padding(1px 2px 3px 4px);
-    @include margin-left(5px);
-    @include extjs-bidi($styles: (
-        margin: 1em 2em 3em 4em,
-        padding: 5in 6in 7in 8in,
-        float: right
-    ));
+    //@include padding(1px 2px 3px 4px);
+    //@include margin-left(5px);
+    //@include extjs-bidi($styles: (
+    //    margin: 1em 2em 3em 4em,
+    //    padding: 5in 6in 7in 8in,
+    //    float: right
+    //));
+    //@include test(#{10px} 12px / 5px);
+
+    @include border-radius(10px 20px 30px 40px);
+    @include border-top-left-radius(12px 10px);
+    @include border-bottom-left-radius(12px 12px);
 }
