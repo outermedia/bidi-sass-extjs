@@ -1,0 +1,201 @@
+
+
+
+//--------------------------------------------------------------------------------------------------
+// indicates whether the given property is a border-radius style variant
+//--------------------------------------------------------------------------------------------------
+@function extjs-is-border-radius-property($property) {
+    $border-radius-property-names:
+            border-radius
+            border-top-left-radius
+            border-top-right-radius
+            border-bottom-right-radius
+            border-bottom-left-radius;
+
+    @return index($border-radius-property-names, $property) != null;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// generates a list of border-radius properties for cross-browser support
+//--------------------------------------------------------------------------------------------------
+@function extjs-create-cross-browser-border-radius-properties($side:"", $direction:"") {
+    $side: if($side == null, "", "-#{$side}");
+    $direction: if($direction == null, "", "-#{$direction}");
+
+    @return (
+            -webkit-border#{$side}#{$direction}-radius,
+            -moz-border#{$side}#{$direction}-radius,
+            border#{$side}#{$direction}-radius
+    );
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// builds a border-radius info object
+//--------------------------------------------------------------------------------------------------
+@function extjs-build-border-radius-info($side, $direction, $values) {
+    $compact: $side == null or $direction == null;
+    $properties: extjs-create-cross-browser-border-radius-properties($side, $direction);
+
+    $info: (
+            compact: $compact,
+            direction: $direction,
+            side: $side,
+            values: $values,
+            properties: $properties
+    );
+
+    @return $info;
+}
+
+
+@function extjs-create-border-radius-value-map($top-left, $top-right, $bottom-right, $bottom-left) {
+    $value-map: (
+            top-left: $top-left,
+            top-right: $top-right,
+            bottom-right: $bottom-right,
+            bottom-left: $bottom-left,
+            compact: $top-left $top-right $bottom-right $bottom-left
+    );
+
+    @return $value-map;
+}
+
+
+@function extjs-build-border-radius-value-map($corner-values) {
+    $index-matrix: (
+                    (1 1 1 1), // single value: 10px => 10px 10px 10px 10px
+                    (1 2 1 2), // two values: 10px 20px => 10px 20px 10px 20px
+                    (1 2 3 2), // three values: 10px 20px 30px => 10px 20px 30px 20px
+                    (1 2 3 4), // four values: 10px 20px 30px 40px => 10px 20px 30px 40px
+    );
+
+    @if type-of($corner-values) != list {
+        $corner-values: ($corner-values,);
+    }
+
+    $matrix-index: length($corner-values);
+    $indices: nth($index-matrix, $matrix-index);
+
+    $top-left: nth($corner-values, nth($indices, 1));
+    $top-right: nth($corner-values, nth($indices, 2));
+    $bottom-right: nth($corner-values, nth($indices, 3));
+    $bottom-left: nth($corner-values, nth($indices, 4));
+
+    @return extjs-create-border-radius-value-map($top-left, $top-right, $bottom-right, $bottom-left);
+}
+
+
+@function extjs-parse-border-radius-axis-value($axis-value) {
+    @if $axis-value == initial or $axis-value == inherit {
+        @return (
+                top-left: $axis-value, top-right: $axis-value,
+                bottom-right: $axis-value, bottom-left: $axis-value
+        );
+    }
+    @else {
+        $value-delimiter: " ";
+        $corner-values: extjs-str-split(#{$axis-value}, $value-delimiter);
+
+        @return extjs-build-border-radius-value-map($corner-values);
+    }
+}
+
+
+@function extjs-parse-border-radius-axis-values($axis-values) {
+    $x-axis-value: nth($axis-values, 1);
+    $y-axis-value: nth($axis-values, 2);
+
+    @return (
+            x: extjs-parse-border-radius-axis-value($x-axis-value),
+            y: extjs-parse-border-radius-axis-value($y-axis-value)
+    )
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// parses the given border-radius value and returns a map with pairs for x and y values per corner
+//--------------------------------------------------------------------------------------------------
+@function extjs-parse-border-radius-values($border-radius, $compact) {
+    $axis-delimiter: "/";
+    $values: null;
+
+    @if extjs-str-contains($border-radius, $axis-delimiter) {
+        $values: extjs-parse-border-radius-axis-values(extjs-str-split($border-radius, $axis-delimiter));
+    }
+    @else if $compact {
+        $values: extjs-parse-border-radius-axis-values(($border-radius, $border-radius));
+    }
+    @else if type-of($border-radius) == list and length($border-radius) == 2 {
+        // in case of corner specific style property with x and y value
+        // e.g.: border-top-left-radius: 10px 16px;
+        $values: extjs-parse-border-radius-axis-values((nth($border-radius, 1), nth($border-radius, 2)));
+    }
+    @else {
+        // assumed to be a list with single value or something else interpolated to single value
+        $values: extjs-parse-border-radius-axis-values((#{$border-radius}, #{$border-radius}));
+    }
+
+    @return $values;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// provides a map with side and direction information from the given border radius property name
+//--------------------------------------------------------------------------------------------------
+@function extjs-get-border-radius-info($property, $value) {
+    $direction: extjs-extract-direction($property);
+    $side: extjs-extract-side($property);
+    $values: extjs-parse-border-radius-values($value, extjs-is-compact-style-property($property));
+
+    @return extjs-build-border-radius-info($side, $direction, $values);
+}
+
+
+@function extjs-swap-border-radius-axis-values($axis-values) {
+    $top-left: map-get($axis-values, top-right);
+    $top-right: map-get($axis-values, top-left);
+    $bottom-right: map-get($axis-values, bottom-left);
+    $bottom-left: map-get($axis-values, bottom-right);
+
+    @return extjs-create-border-radius-value-map($top-left, $top-right, $bottom-right, $bottom-left);
+}
+
+
+@function extjs-swap-border-radius-values($values) {
+    $result: (
+            x: extjs-swap-border-radius-axis-values(map-get($values, x)),
+            y: extjs-swap-border-radius-axis-values(map-get($values, y))
+    );
+
+    @return $result;
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// inverts the border radius information map by flipping the direction and updates the properties.
+// in case of compact style (border-radius) output and input are equal
+//--------------------------------------------------------------------------------------------------
+@function extjs-invert-border-radius-info($source-info) {
+    $direction: map-get($source-info, direction);
+    $direction: if($direction != null, extjs-invert-direction($direction), null);
+    $side: map-get($source-info, side);
+    $values: extjs-swap-border-radius-values(map-get($source-info, values));
+
+    @return extjs-build-border-radius-info($side, $direction, $values);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// provides a map with ltr and rtl property information built from the given border radius info
+//--------------------------------------------------------------------------------------------------
+@function extjs-calculate-border-radius-bidi-style($property, $value) {
+    $radius-info-ltr: extjs-get-border-radius-info($property, $value);
+    $radius-info-rtl: extjs-invert-border-radius-info($radius-info-ltr);
+
+    @return (
+            ltr: $radius-info-ltr,
+            rtl: $radius-info-rtl
+    );
+}

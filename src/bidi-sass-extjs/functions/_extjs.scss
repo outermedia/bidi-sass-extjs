@@ -1,0 +1,9 @@
+
+
+//--------------------------------------------------------------------------------------------------
+// indicates whether the $include-rtl variable is available and set to true (done by/in/with ExtJS)
+//--------------------------------------------------------------------------------------------------
+@function extjs-include-rtl() {
+    // local variables take precedence so check local scope before global
+    @return (variable-exists(include-rtl) or global-variable-exists(include-rtl)) and $include-rtl;
+}
