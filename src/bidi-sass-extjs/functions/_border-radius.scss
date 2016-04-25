@@ -1,6 +1,3 @@
-
-
-
 //--------------------------------------------------------------------------------------------------
 // indicates whether the given property is a border-radius style variant
 //--------------------------------------------------------------------------------------------------
@@ -119,25 +116,26 @@
 //--------------------------------------------------------------------------------------------------
 @function extjs-parse-border-radius-values($border-radius, $compact) {
     $axis-delimiter: "/";
+    $axis-values: null;
     $values: null;
 
     @if extjs-str-contains($border-radius, $axis-delimiter) {
-        $values: extjs-parse-border-radius-axis-values(extjs-str-split($border-radius, $axis-delimiter));
+        $axis-values: extjs-str-split($border-radius, $axis-delimiter);
     }
     @else if $compact {
-        $values: extjs-parse-border-radius-axis-values(($border-radius, $border-radius));
+        $axis-values: ($border-radius, $border-radius);
     }
     @else if type-of($border-radius) == list and length($border-radius) == 2 {
         // in case of corner specific style property with x and y value
         // e.g.: border-top-left-radius: 10px 16px;
-        $values: extjs-parse-border-radius-axis-values((nth($border-radius, 1), nth($border-radius, 2)));
+        $axis-values: (nth($border-radius, 1), nth($border-radius, 2));
     }
     @else {
         // assumed to be a list with single value or something else interpolated to single value
-        $values: extjs-parse-border-radius-axis-values((#{$border-radius}, #{$border-radius}));
+        $axis-values: ($border-radius, $border-radius);
     }
 
-    @return $values;
+    @return extjs-parse-border-radius-axis-values($axis-values);
 }
 
 

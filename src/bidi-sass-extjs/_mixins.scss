@@ -1,11 +1,6 @@
-
-//--------------------------------------------------------------------------------------------------
-// utility
-//--------------------------------------------------------------------------------------------------
-
+// NOTES:
 // 'extjs-apply-*' mixins wrap styles into direction aware selector
 // 'extjs-write-*' mixins write styles only without wrapping
-
 
 
 //--------------------------------------------------------------------------------------------------
@@ -15,6 +10,41 @@
     #{$property}: $value;
 }
 
+
+//--------------------------------------------------------------------------------------------------
+// Writes the border-radius style using the given border-radius info object (low-level)
+//--------------------------------------------------------------------------------------------------
+@mixin extjs-write-border-radius($radius-info, $value-key, $axis-delimiter) {
+    $values: map-get($radius-info, values);
+    $x-value: #{map-get(map-get($values, x), $value-key)};
+    $y-value: #{map-get(map-get($values, y), $value-key)};
+
+    $value: #{$x-value}#{$axis-delimiter}#{$y-value};
+
+    @if $x-value == $y-value {
+        $value: $x-value;
+    }
+
+    @each $property in map-get($radius-info, properties) {
+        @include extjs-write-style($property, $value);
+    }
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Writes the border-radius style from the given radius info object (high-level)
+//--------------------------------------------------------------------------------------------------
+@mixin extjs-write-border-radius-style($radius-info) {
+    @if map-get($radius-info, compact) {
+        @include extjs-write-border-radius($radius-info, compact, "/");
+    }
+    @else {
+        $side: map-get($radius-info, side);
+        $direction: map-get($radius-info, direction);
+        $value-key: #{$side}-#{$direction};
+        @include extjs-write-border-radius($radius-info, $value-key, " ");
+    }
+}
 
 
 //--------------------------------------------------------------------------------------------------
@@ -28,16 +58,20 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // Batch processing variant of the extjs-write-bidi-style mixin
 //--------------------------------------------------------------------------------------------------
 @mixin extjs-write-bidi-styles($styles, $direction) {
     @each $property, $value in $styles {
-        @include extjs-write-bidi-style($property, $value, $direction);
+        @if extjs-is-border-radius-property($property) {
+            $bidi-style: extjs-calculate-border-radius-bidi-style($property, $value);
+            @include extjs-write-border-radius-style(map-get($bidi-style, $direction));
+        }
+        @else {
+            @include extjs-write-bidi-style($property, $value, $direction);
+        }
     }
 }
-
 
 
 //--------------------------------------------------------------------------------------------------
@@ -66,7 +100,6 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // Generates wrapping selectors for ltr and rtl styles and write the given styles map into the
 // selectors. In case the $include-rtl variable is not set or false, then no direction aware
@@ -88,44 +121,10 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
-// Writes the border-radius style using the given border-radius info object
+// Generates wrapping selectors and writes border-radius style. This is the single style variant for
+// the border-radius style.
 //--------------------------------------------------------------------------------------------------
-@mixin extjs-write-border-radius($radius-info, $value-key, $axis-delimiter) {
-    $values: map-get($radius-info, values);
-    $x-value: #{map-get(map-get($values, x), $value-key)};
-    $y-value: #{map-get(map-get($values, y), $value-key)};
-
-    $value: #{$x-value}#{$axis-delimiter}#{$y-value};
-
-    @if $x-value == $y-value {
-        $value: $x-value;
-    }
-
-    @each $property in map-get($radius-info, properties) {
-        @include extjs-write-style($property, $value);
-    }
-}
-
-
-
-@mixin extjs-write-border-radius-style($radius-info) {
-    @if map-get($radius-info, compact) {
-        @include extjs-write-border-radius($radius-info, compact, "/");
-    }
-    @else {
-        $side: map-get($radius-info, side);
-        $direction: map-get($radius-info, direction);
-        $value-key: #{$side}-#{$direction};
-        @include extjs-write-border-radius($radius-info, $value-key, " ");
-    }
-}
-
-
-//
-//
-//
 @mixin extjs-apply-border-radius($sub-selector, $property, $value) {
     $bidi-style: extjs-calculate-border-radius-bidi-style($property, $value);
 
@@ -145,7 +144,6 @@
         @include extjs-write-border-radius-style($ltr);
     }
 }
-
 
 
 //--------------------------------------------------------------------------------------------------
@@ -176,7 +174,6 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // padding
 //--------------------------------------------------------------------------------------------------
@@ -191,7 +188,6 @@
 @mixin padding-right($value, $sub-selector: "") {
     @include extjs-apply-style(padding-right, $value, $sub-selector);
 }
-
 
 
 //--------------------------------------------------------------------------------------------------
@@ -210,7 +206,6 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // border-width
 //--------------------------------------------------------------------------------------------------
@@ -225,7 +220,6 @@
 @mixin border-right-width($value, $sub-selector: "") {
     @include extjs-apply-style(border-right-width, $value, $sub-selector);
 }
-
 
 
 //--------------------------------------------------------------------------------------------------
@@ -244,7 +238,6 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // border-color
 //--------------------------------------------------------------------------------------------------
@@ -261,7 +254,6 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // border (generic)
 //--------------------------------------------------------------------------------------------------
@@ -274,45 +266,8 @@
 }
 
 
-
 //--------------------------------------------------------------------------------------------------
 // border-radius
-//--------------------------------------------------------------------------------------------------
-@mixin border-top-left-radius($value, $sub-selector) {
-
-}
-
-
-
-//--------------------------------------------------------------------------------------------------
-// clear
-//--------------------------------------------------------------------------------------------------
-@mixin clear($value, $sub-selector: "") {
-    @include extjs-apply-style(clear, $value, $sub-selector);
-}
-
-
-
-//--------------------------------------------------------------------------------------------------
-// float
-//--------------------------------------------------------------------------------------------------
-@mixin float($value, $sub-selector: "") {
-    @include extjs-apply-style(float, $value, $sub-selector);
-}
-
-
-
-//--------------------------------------------------------------------------------------------------
-// text-align
-//--------------------------------------------------------------------------------------------------
-@mixin text-align($value, $sub-selector: "") {
-    @include extjs-apply-style(text-align, $value, $sub-selector);
-}
-
-
-
-//--------------------------------------------------------------------------------------------------
-//
 //--------------------------------------------------------------------------------------------------
 @mixin border-radius($value, $sub-selector: "") {
     @include extjs-apply-border-radius($sub-selector, border-radius, $value);
@@ -332,4 +287,28 @@
 
 @mixin border-bottom-left-radius($value, $sub-selector: "") {
     @include extjs-apply-border-radius($sub-selector, border-bottom-left-radius, $value);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// clear
+//--------------------------------------------------------------------------------------------------
+@mixin clear($value, $sub-selector: "") {
+    @include extjs-apply-style(clear, $value, $sub-selector);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// float
+//--------------------------------------------------------------------------------------------------
+@mixin float($value, $sub-selector: "") {
+    @include extjs-apply-style(float, $value, $sub-selector);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// text-align
+//--------------------------------------------------------------------------------------------------
+@mixin text-align($value, $sub-selector: "") {
+    @include extjs-apply-style(text-align, $value, $sub-selector);
 }

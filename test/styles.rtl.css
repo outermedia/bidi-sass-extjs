@@ -1,26 +1,45 @@
-.foo:not(.x-rtl) {
-  -webkit-border-radius: 10px 20px 30px 40px;
-  -moz-border-radius: 10px 20px 30px 40px;
-  border-radius: 10px 20px 30px 40px; }
-.foo.x-rtl {
-  -webkit-border-radius: 20px 10px 40px 30px;
-  -moz-border-radius: 20px 10px 40px 30px;
-  border-radius: 20px 10px 40px 30px; }
-.foo:not(.x-rtl) {
-  -webkit-border-top-left-radius: 12px 10px;
-  -moz-border-top-left-radius: 12px 10px;
-  border-top-left-radius: 12px 10px; }
-.foo.x-rtl {
-  -webkit-border-top-right-radius: 12px 10px;
-  -moz-border-top-right-radius: 12px 10px;
-  border-top-right-radius: 12px 10px; }
-.foo:not(.x-rtl) {
-  -webkit-border-bottom-left-radius: 12px;
-  -moz-border-bottom-left-radius: 12px;
-  border-bottom-left-radius: 12px; }
-.foo.x-rtl {
-  -webkit-border-bottom-right-radius: 12px;
-  -moz-border-bottom-right-radius: 12px;
-  border-bottom-right-radius: 12px; }
+/* generate combined styles using single mixin call */
+.combined-styles:not(.x-rtl) {
+  margin: 1em 2em 3em 4em;
+  padding: 5in 6in 7in 8in;
+  float: right;
+  -webkit-border-top-left-radius: 10px;
+  -moz-border-top-left-radius: 10px;
+  border-top-left-radius: 10px; }
+.combined-styles.x-rtl {
+  margin: 1em 4em 3em 2em;
+  padding: 5in 8in 7in 6in;
+  float: left;
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-top-right-radius: 10px;
+  border-top-right-radius: 10px; }
+
+/* generate padding styles only */
+.single-style-padding:not(.x-rtl) {
+  padding: 1px 2px 3px 4px; }
+.single-style-padding.x-rtl {
+  padding: 1px 4px 3px 2px; }
+.single-style-padding:not(.x-rtl) {
+  padding-left: 12px; }
+.single-style-padding.x-rtl {
+  padding-right: 12px; }
+.single-style-padding:not(.x-rtl) {
+  padding-right: 12px; }
+.single-style-padding.x-rtl {
+  padding-left: 12px; }
+
+/* generate margin styles only */
+.single-style-padding:not(.x-rtl) {
+  margin: 1px 2px 3px 4px; }
+.single-style-padding.x-rtl {
+  margin: 1px 4px 3px 2px; }
+.single-style-padding:not(.x-rtl) {
+  margin-left: 12px; }
+.single-style-padding.x-rtl {
+  margin-right: 12px; }
+.single-style-padding:not(.x-rtl) {
+  margin-right: 12px; }
+.single-style-padding.x-rtl {
+  margin-left: 12px; }
 
 /*# sourceMappingURL=styles.rtl.css.map */
