@@ -8,7 +8,7 @@ $include-rtl: true;
 
 /* combined styles using single mixin call */
 .combined-styles {
-    @include extjs-bidi($styles: (
+    @include extjs-bidi((
         margin: 1em 2em 3em 4em,
         padding: 5in 6in 7in 8in,
         float: right,
