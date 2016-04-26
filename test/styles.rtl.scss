@@ -6,7 +6,7 @@ $include-rtl: true;
 
 @import "../src/bidi-sass-extjs/all";
 
-/* generate combined styles using single mixin call */
+/* combined styles using single mixin call */
 .combined-styles {
     @include extjs-bidi($styles: (
         margin: 1em 2em 3em 4em,
@@ -16,16 +16,27 @@ $include-rtl: true;
     ));
 }
 
-/* generate padding styles only */
-.single-style-padding {
+/* single styles only */
+.single-styles-only {
     @include padding(1px 2px 3px 4px);
-    @include padding-left(12px);
-    @include padding-right(12px);
+    @include margin-left(12px);
+    @include border-right-width(12px);
 }
 
-/* generate margin styles only */
-.single-style-padding {
-    @include margin(1px 2px 3px 4px);
-    @include margin-left(12px);
-    @include margin-right(12px);
+
+/* with additional sub-selector */
+.with-additional-sub-selector {
+    @include margin(1px 2px 3px 4px, "sub-selector");
+}
+
+/* combined styles with sub-selector */
+.combined-with-sub-selector {
+    @include extjs-bidi($sub-selector: "sub-selector",
+        $styles: (
+            margin: 1em 2em 3em 4em,
+            padding: 5in 6in 7in 8in,
+            float: right,
+            border-top-left-radius: 10px 20px 30px 40px
+        )
+    );
 }

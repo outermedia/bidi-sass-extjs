@@ -1,4 +1,4 @@
-/* generate combined styles using single mixin call */
+/* combined styles using single mixin call */
 .combined-styles:not(.x-rtl) {
   margin: 1em 2em 3em 4em;
   padding: 5in 6in 7in 8in;
@@ -14,32 +14,40 @@
   -moz-border-top-right-radius: 10px;
   border-top-right-radius: 10px; }
 
-/* generate padding styles only */
-.single-style-padding:not(.x-rtl) {
+/* single styles only */
+.single-styles-only:not(.x-rtl) {
   padding: 1px 2px 3px 4px; }
-.single-style-padding.x-rtl {
+.single-styles-only.x-rtl {
   padding: 1px 4px 3px 2px; }
-.single-style-padding:not(.x-rtl) {
-  padding-left: 12px; }
-.single-style-padding.x-rtl {
-  padding-right: 12px; }
-.single-style-padding:not(.x-rtl) {
-  padding-right: 12px; }
-.single-style-padding.x-rtl {
-  padding-left: 12px; }
+.single-styles-only:not(.x-rtl) {
+  margin-left: 12px; }
+.single-styles-only.x-rtl {
+  margin-right: 12px; }
+.single-styles-only:not(.x-rtl) {
+  border-right-width: 12px; }
+.single-styles-only.x-rtl {
+  border-left-width: 12px; }
 
-/* generate margin styles only */
-.single-style-padding:not(.x-rtl) {
+/* with additional sub-selector */
+.with-additional-sub-selector:not(.x-rtl) sub-selector {
   margin: 1px 2px 3px 4px; }
-.single-style-padding.x-rtl {
+.with-additional-sub-selector.x-rtl sub-selector {
   margin: 1px 4px 3px 2px; }
-.single-style-padding:not(.x-rtl) {
-  margin-left: 12px; }
-.single-style-padding.x-rtl {
-  margin-right: 12px; }
-.single-style-padding:not(.x-rtl) {
-  margin-right: 12px; }
-.single-style-padding.x-rtl {
-  margin-left: 12px; }
+
+/* combined styles with sub-selector */
+.combined-with-sub-selector:not(.x-rtl) sub-selector {
+  margin: 1em 2em 3em 4em;
+  padding: 5in 6in 7in 8in;
+  float: right;
+  -webkit-border-top-left-radius: 10px;
+  -moz-border-top-left-radius: 10px;
+  border-top-left-radius: 10px; }
+.combined-with-sub-selector.x-rtl sub-selector {
+  margin: 1em 4em 3em 2em;
+  padding: 5in 8in 7in 6in;
+  float: left;
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-top-right-radius: 10px;
+  border-top-right-radius: 10px; }
 
 /*# sourceMappingURL=styles.rtl.css.map */
